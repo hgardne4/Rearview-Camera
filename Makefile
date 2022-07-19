@@ -1,2 +1,2 @@
-run: display.py
-	python3 display.py
+run: src/display.py
+	python3 src/display.py
