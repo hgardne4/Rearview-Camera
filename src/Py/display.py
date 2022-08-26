@@ -2,32 +2,38 @@
 Henry Gardner
 Rear-view Camera for any car
 
-Parts Needed:
-    - Raspberry Pi (3+)
-    - Screen (I picked a 7 inch display)
-    - GPS usb locator
-    - USB Camera
+Dislpay file that deals with the user interface
 
-This file contains the neccesary components for a basic camera output.    
+Notes on Tkinter (from documentation):
+    - each widgit is represented by a Python object
+    - there is a widgit hierarchy 
+    - NEED to manually add each widgit to the frame using geometery manager like .grid()
+
 """
 
-import numpy
-import cv2
+from tkinter import *
+from tkinter import ttk
+import gpsd
+import gps
+import os
+import json
 
-# connect to the usb camera
-video = cv2.VideoCapture(0)
+# initialize Tk and the Tcl interpreter, in addition to creating the root "toplevel" window
+root = Tk()
+root.geometry("500x500")
+# create the frame widget, which sits inside the root window
+frame = ttk.Frame(root, padding=10)
+frame.pack()
 
-while(True):
-    # capture frame by frame (from cv2 docs)
-    ret, frame = video.read()
+mmenu = Menu(frame)
+mmenu.add_command(label="Exit", command = root.destroy)
 
-    # display frame
-    cv2.imshow('Camera', frame)
+root.config(menu = mmenu)
 
-    # sleep for a second to verify not terminating
-    if cv2.waitKey(1) == ord('q'):
-        break
+gpsd.connect()
+output = gps.get_gps_data()
+print(json.dumps(output, indent = 2))
+ttk.Label(frame, text="hello").grid(column=0,row=0)
+#ttk.Button(frame, text="exit", command=root.destroy).grid(column=1,row=1)
+root.mainloop()
 
-# destroy windows and video when complete
-video.release()
-cv2.destroyAllWindows()
